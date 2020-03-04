@@ -14,6 +14,10 @@ Change Log
     bugs:   
         1.unsupport write raw data to file,always call TypeError.
 
+    future features
+        1.add serial port options(send rtcm stream to serial port).
+        2.add gui(use pyqt5).
+
     debug log:
 
     2020/03/03
@@ -22,8 +26,11 @@ Change Log
         3.add period upload gga sentence to ntrip caster(default:3 sec) in case of 
         lost connection every 1 min(the caster need received rover position in real-time).
 
+    2020/03/04
+        1.fix version bug.
+        2.change some comments.
 
-    Modify by Caesar in 2020/03/03
+Modify by Caesar in 2020/03/04
 """
 
 import socket
@@ -31,7 +38,7 @@ import sys
 import datetime
 import base64
 import time
-#import ssl
+# import ssl
 from optparse import OptionParser
 
 
@@ -143,13 +150,13 @@ class NtripClient(object):
     def readData(self):
         reconnectTry = 1
         sleepTime = 1
-        reconnectTime = 0
-        uploadGGAPeriod = 3   # 修改此处可以控制间隔几秒上传一次GGA语句
+        # reconnectTime = 0 #unused
+        uploadGGAPeriod = 3   # upload GGA sentence period(default:3 sec)
 
-        Endupload = datetime.timedelta(seconds=uploadGGAPeriod)  # 每3秒上传一次GGA
+        Endupload = datetime.timedelta(seconds=uploadGGAPeriod)  # calculate how many times with seconds unit
         if maxConnectTime > 0:
             EndConnect = datetime.timedelta(seconds=maxConnectTime)
-            print('EndConnect:{}'.format(EndConnect))   # 打印最大连接时长
+            print('EndConnect:{}'.format(EndConnect))   # print max connect times
         try:
             while reconnectTry <= maxReconnect:
                 found_header = False
@@ -170,7 +177,7 @@ class NtripClient(object):
                     self.socket.sendall(self.getMountPointString().encode(encoding='utf-8'))
                     while not found_header:
                         casterResponse = self.socket.recv(4096)     # All the data
-#                        print('recv:', casterResponse.decode(encoding='utf-8'))    #打印接收到的数据，调试时使用
+#                        print('recv:', casterResponse.decode(encoding='utf-8'))    # print recv data(for debug)
                         header_lines = casterResponse.decode(encoding='utf-8').split('\r\n')
 
                         for line in header_lines:
@@ -198,15 +205,15 @@ class NtripClient(object):
                             elif line.find("ICY 200 OK") >= 0:
                                 # Request was valid
                                 self.socket.sendall(self.getGGAString().encode(encoding='utf-8'))
-                                uploadTime = datetime.datetime.now()  # 获取当前上传GGA时间
+                                uploadTime = datetime.datetime.now()  # get current upload time
                             elif line.find("HTTP/1.0 200 OK") >= 0:
                                 # Request was valid
                                 self.socket.sendall(self.getGGAString().encode(encoding='utf-8'))
-                                uploadTime = datetime.datetime.now()  # 获取当前上传GGA时间
+                                uploadTime = datetime.datetime.now()  # get current upload time
                             elif line.find("HTTP/1.1 200 OK") >= 0:
                                 # Request was valid
                                 self.socket.sendall(self.getGGAString().encode(encoding='utf-8'))
-                                uploadTime = datetime.datetime.now()  # 获取当前上传GGA时间
+                                uploadTime = datetime.datetime.now()  # get current upload time
 
                     data = "Initial data"
                     while data:
@@ -216,16 +223,16 @@ class NtripClient(object):
                             if self.UDP_socket:
                                 self.UDP_socket.sendto(data, ('<broadcast>', self.UDP_Port))
                                 print('Send to udp socket port {}'.format(self.UDP_Port))
-                            print(datetime.datetime.now()-connectTime)  # 打印已连接时长
+                            print(datetime.datetime.now()-connectTime)  # printf connected times
                             if maxConnectTime:
                                 if datetime.datetime.now() > connectTime+EndConnect:
                                     if self.verbose:
                                         sys.stderr.write("Connection Timed exceeded\n")
                                     sys.exit(0)
 
-                            if datetime.datetime.now() > uploadTime + Endupload:  # GGA上传周期时间到
+                            if datetime.datetime.now() > uploadTime + Endupload:  # upload period is expired
                                 self.socket.sendall(self.getGGAString().encode(encoding='utf-8'))
-                                uploadTime = datetime.datetime.now()  # 获取当前上传GGA时间      
+                                uploadTime = datetime.datetime.now()  # get current upload time  
 
                         except socket.timeout:
                             if self.verbose:
@@ -266,7 +273,8 @@ class NtripClient(object):
             if self.socket:
                 self.socket.close()
             sys.exit()
-           
+            
+                           
 if __name__ == '__main__':
     usage = "NtripClient.py [options] [caster] [port] mountpoint"
     parser = OptionParser(version=version, usage=usage)
@@ -336,7 +344,7 @@ if __name__ == '__main__':
     ntripArgs['headerOutput'] = options.headerOutput
 
     if options.UDP:
-         ntripArgs['UDP_Port'] = int(options.UDP)
+        ntripArgs['UDP_Port'] = int(options.UDP)
 
     maxReconnect = options.maxReconnect
     maxConnectTime = options.maxConnectTime
@@ -369,7 +377,7 @@ if __name__ == '__main__':
         ntripArgs['headerFile'] = h
         ntripArgs['headerOutput'] = True
 
-#    print(ntripArgs) # 输出配置信息(调试使用) 
+#    print(ntripArgs) # print config infomation(for debug)
     n = NtripClient(**ntripArgs)
     try:
         n.readData()
