@@ -44,15 +44,15 @@ This project is copy from https://github.com/jcmb/NTRIP, i modify with python3 p
 
 	Step 1:git clone this project;
 	
-	git clone https://github.com/liukai-tech/NtripClient-Tools
+		git clone https://github.com/liukai-tech/NtripClient-Tools
 	
 	Step 2:Open the windows cmd console,change directory to this project;
 	
-	cd /d H:/NtripClient-Tools/
+		cd /d H:/NtripClient-Tools/
 	
 	Step 3:Input NtripClient.py -u abc -p abc -m 100000 -r 10000 -v -D 9999 -2 127.0.0.1 2101 RTCM32 and watch console print process infomation.
 	
-	NtripClient.py -u abc -p abc -m 100000 -r 10000 -v -D 9999 -2 127.0.0.1 2101 RTCM32
+		NtripClient.py -u abc -p abc -m 100000 -r 10000 -v -D 9999 -2 127.0.0.1 2101 RTCM32
 
 ### Support Functions
 
