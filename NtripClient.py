@@ -35,8 +35,8 @@ import time
 from optparse import OptionParser
 
 
-version = 0.2
-useragent = "NTRIP PythonClient/%.1f" % version
+version = '0.2'
+useragent = "NTRIP PythonClient/{}".format(version)
 
 # reconnect parameter (fixed values):
 factor = 2  # How much the sleep time increases with each failed attempt
