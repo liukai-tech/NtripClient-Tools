@@ -4,7 +4,7 @@ This is heavily based on the NtripPerlClient program written by BKG.
 Then heavily based on a unavco original.
 
 Change Log
-    example:NtripClient.py -u 123 -p 123 -m 100000 -r 10000 -v -D 9999 -2 39.100.152.105 50005 RTCM32
+    example:NtripClient.py -u abc -p abc -m 100000 -r 100 -v -D 9999 -2 127.0.0.1 2101 RTCM32
 
     support functions:   
         1.get source table;
