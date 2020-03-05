@@ -38,7 +38,7 @@ This project is copy from https://github.com/jcmb/NTRIP, i modify with python3 p
 	  --HeaderFile=HEADERFILE
 							Write headers to this file, instead of stderr.
 
-#### Example:NtripClient.py -u abc -p abc -m 100000 -r 10000 -v -D 9999 -2 127.0.0.1 2101 RTCM32
+#### Example:NtripClient.py -u abc -p abc -m 100000 -r 100 -v -D 9999 -2 127.0.0.1 2101 RTCM32
 
 ### Operating Steps
 
